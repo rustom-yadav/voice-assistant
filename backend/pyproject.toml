@@ -1,0 +1,13 @@
+[project]
+name = "backend"
+version = "0.1.0"
+description = "Local voice assistant backend"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi",
+    "uvicorn[standard]",
+    "faster-whisper",
+    "sounddevice",
+    "numpy",
+    "ollama",
+]
