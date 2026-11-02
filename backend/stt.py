@@ -20,11 +20,20 @@ class Transcriber:
             WHISPER_DEVICE,
             WHISPER_COMPUTE_TYPE,
         )
-        self.model = WhisperModel(
-            WHISPER_MODEL,
-            device=WHISPER_DEVICE,
-            compute_type=WHISPER_COMPUTE_TYPE,
-        )
+        try:
+            self.model = WhisperModel(
+                WHISPER_MODEL,
+                device=WHISPER_DEVICE,
+                compute_type=WHISPER_COMPUTE_TYPE,
+                local_files_only=True,
+            )
+        except Exception:  # noqa: BLE001
+            self.model = WhisperModel(
+                WHISPER_MODEL,
+                device=WHISPER_DEVICE,
+                compute_type=WHISPER_COMPUTE_TYPE,
+                local_files_only=False,
+            )
         logger.info("Whisper model loaded successfully.")
 
     def transcribe(self, audio: np.ndarray) -> str:
