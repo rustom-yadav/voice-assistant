@@ -1,4 +1,3 @@
-
 # Python
 __pycache__/
 *.py[cod]
@@ -20,10 +19,28 @@ node_modules/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+out/
+dist-electron/
+
+# Audio & Recordings
+*.wav
+*.mp3
+*.ogg
+*.flac
+
+# Local Models & Weights
+models/
+*.bin
+*.onnx
+*.pt
+
+# Logs
+*.log
 
 # Environment & Local files
 .env
 .env.local
+.env.*.local
 
 # OS files
 Thumbs.db
@@ -34,4 +51,5 @@ Desktop.ini
 .vscode/
 .idea/
 
+# Planning & Notes
 plan.md
