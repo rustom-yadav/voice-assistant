@@ -1,0 +1,13 @@
+{
+  "name": "voice-assistant-electron",
+  "version": "1.0.0",
+  "description": "Local voice assistant desktop shell",
+  "main": "main.js",
+  "type": "module",
+  "scripts": {
+    "start": "electron ."
+  },
+  "devDependencies": {
+    "electron": "^33.2.0"
+  }
+}
