@@ -2,12 +2,49 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; connect-src ws://127.0.0.1:8765">
   <title>Local Voice Assistant</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>Local Voice Assistant</h1>
-  <p id="status">Connecting to backend...</p>
+  <div class="container">
+    <header class="header">
+      <div class="controls-row">
+        <div class="button-group">
+          <button id="btn-start" type="button" class="btn btn-primary" disabled>Start</button>
+          <button id="btn-stop" type="button" class="btn btn-secondary" disabled>Stop</button>
+        </div>
+        <div class="status-indicator">
+          <span id="status-dot" class="dot dot-disconnected"></span>
+          <span id="status-text" class="status-text">Starting backend... (loading models)</span>
+        </div>
+      </div>
+    </header>
+
+    <main class="main-content">
+      <section class="section">
+        <label for="transcript-input" class="section-label">Transcript</label>
+        <textarea
+          id="transcript-input"
+          class="text-input"
+          placeholder="Transcription will appear here when you speak, or you can type here directly..."
+          rows="6"
+        ></textarea>
+      </section>
+
+      <section class="section action-section">
+        <button id="btn-suggest" type="button" class="btn btn-action" disabled>Suggest Answer</button>
+        <div id="error-message" class="error-message" role="alert" aria-live="polite"></div>
+      </section>
+
+      <section class="section">
+        <label class="section-label">Answer</label>
+        <div id="answer-output" class="answer-box" aria-live="polite"></div>
+      </section>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
 </body>
 </html>
-
