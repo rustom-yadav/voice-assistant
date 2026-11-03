@@ -1,19 +1,27 @@
-import { spawn, execSync } from "node:child_process";
+import { execSync, spawn } from "node:child_process";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { app, BrowserWindow } from "electron";
+import { app, BrowserWindow, dialog } from "electron";
 
-const __dirname = import.meta.dirname || path.dirname(fileURLToPath(import.meta.url));
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 let mainWindow = null;
 let backendProcess = null;
 
 function startBackend() {
+  if (backendProcess) {
+    return;
+  }
   const backendDir = path.join(__dirname, "..", "backend");
-  const pythonPath = path.join(backendDir, ".venv", "Scripts", "python.exe");
+  const isWindows = process.platform === "win32";
+  const pythonPath = path.join(
+    backendDir,
+    ".venv",
+    isWindows ? "Scripts/python.exe" : "bin/python"
+  );
   const args = ["-m", "uvicorn", "main:app", "--host", "127.0.0.1", "--port", "8765"];
 
-  console.log(`Starting backend: ${pythonPath} in ${backendDir}`);
+  console.log(`Starting backend: ${pythonPath}`);
   backendProcess = spawn(pythonPath, args, { cwd: backendDir });
 
   backendProcess.stdout.on("data", (data) => {
@@ -25,7 +33,16 @@ function startBackend() {
   });
 
   backendProcess.on("exit", (code, signal) => {
-    console.log(`Python backend exited with code ${code}, signal ${signal}`);
+    console.log(`Python backend exited (code: ${code}, signal: ${signal})`);
+    backendProcess = null;
+  });
+
+  
+  backendProcess.on("error", (err) => {
+    dialog.showErrorBox(
+      "Backend could not start",
+      `${err.message}\n\nRun "uv sync" inside the backend folder first.`,
+    );
     backendProcess = null;
   });
 }
@@ -35,20 +52,15 @@ function stopBackend() {
     return;
   }
 
-  const pid = backendProcess.pid;
-  console.log(`Stopping Python backend (PID: ${pid})...`);
-
+  console.log(`Stopping Python backend (PID: ${backendProcess.pid})...`);
   try {
     if (process.platform === "win32") {
-      execSync(`taskkill /pid ${pid} /T /F`);
+      execSync(`taskkill /pid ${backendProcess.pid} /T /F`, { stdio: "ignore" });
     } else {
       backendProcess.kill();
     }
-  } catch (err) {
-    console.warn(`Error during backend termination: ${err.message}`);
-    if (backendProcess) {
-      backendProcess.kill();
-    }
+  } catch {
+    // Process already terminated
   } finally {
     backendProcess = null;
   }
@@ -84,7 +96,6 @@ app.whenReady().then(() => {
 });
 
 app.on("window-all-closed", () => {
-  stopBackend();
   if (process.platform !== "darwin") {
     app.quit();
   }
