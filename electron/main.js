@@ -84,7 +84,9 @@ function createWindow() {
   });
 }
 
-app.whenReady().then(() => {
+async function init() {
+  await app.whenReady();
+
   startBackend();
   createWindow();
 
@@ -93,7 +95,9 @@ app.whenReady().then(() => {
       createWindow();
     }
   });
-});
+}
+
+init();
 
 app.on("window-all-closed", () => {
   if (process.platform !== "darwin") {
